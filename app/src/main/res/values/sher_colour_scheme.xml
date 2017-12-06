@@ -1,0 +1,17 @@
+<resources>
+    <style name="sher_colours" parent="@style/Theme.AppCompat.Light">
+
+        <item name="android:windowNoTitle">true</item>
+
+        <!--We will be using the toolbar so no need to show ActionBar-->
+        <item name="android:windowActionBar">false</item>
+
+
+        <item name="android:colorPrimary">#FFFFFF</item>
+        <!-- colorPrimaryDark is used for the status bar -->
+        <item name="android:colorPrimaryDark">#0b3768</item>
+        <!-- colorAccent used for the toolbar background -->
+        <item name="android:colorAccent">#35b2ce</item>
+
+    </style>
+</resources>

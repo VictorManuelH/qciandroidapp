@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "314100677688",
+    "firebase_url": "https://qciapp-96804.firebaseio.com",
+    "project_id": "qciapp-96804",
+    "storage_bucket": "qciapp-96804.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314100677688:android:a7a53eab0be3ea33",
+        "android_client_info": {
+          "package_name": "com.example.john.qciandroidapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "314100677688-11aht4pka1sqjgen3788ogrmbjqcd148.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6qo1d4O4_zBJD2Exah_uWvasehmtV4hs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
