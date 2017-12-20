@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -59,8 +60,9 @@ public class Events extends AppCompatActivity {
     Bundle bundle;
     int ud;
     List<EventModel> eventModelList;
+    private ArrayList<String> names = new ArrayList<String>();
     AsyncTask<String, String, List<EventModel>> task;
-
+    Intent inten;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,13 +71,15 @@ public class Events extends AppCompatActivity {
         eventList = (ListView) findViewById(R.id.eventList);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mProgressBar.setVisibility(VISIBLE);
-
-        task = new JSONTask().execute("http://capstoneprototypeqci.azurewebsites.net/api/EventsAPI");
+        inten = new Intent(this, Register.class);
+        task = new JSONTask().execute("http://careercentre.azurewebsites.net/api/Events");
 
         eventList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(),"you clicked on" + eventModelList.get(i).getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"you clicked on " + eventModelList.get(i).getName(), Toast.LENGTH_SHORT).show();
+                inten.putExtra("EventId", eventModelList.get(i).getId());
+                startActivity(inten);
 
             }
         });
@@ -116,6 +120,7 @@ public class Events extends AppCompatActivity {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     EventModel eventModel = new EventModel();
                     JSONObject finalObject = jsonArray.getJSONObject(i);
+                    eventModel.setId(finalObject.getInt("Id"));
                     eventModel.setTime(finalObject.getString("Time"));
                     eventModel.setName(finalObject.getString("Name"));
                     eventModel.setEvent(finalObject.getString("Description"));
@@ -149,57 +154,17 @@ public class Events extends AppCompatActivity {
         protected void onPostExecute(List<EventModel> result) {
             super.onPostExecute(result);
             mProgressBar.setVisibility(View.GONE);
-            EventAdapter adapter = new EventAdapter(getApplicationContext(), R.layout.row, result);
-            eventList.setAdapter(adapter);
 
-
-
-        }
-    }
-
-    public class EventAdapter extends ArrayAdapter{
-
-        public List<EventModel> mEventModelList;
-        public int resource;
-        private LayoutInflater mInflater;
-
-        public EventAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<EventModel> objects) {
-            super(context, resource, objects);
-            mEventModelList = objects;
-            this.resource = resource;
-            mInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-            if (convertView == null) {
-                convertView = mInflater.inflate(resource, null);
+            for (EventModel e :eventModelList) {
+                names.add(e.getId() + "" + e.getName());
             }
+           eventList.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, names));
 
-            ImageView imageView;
-            TextView eventName, eventLocation, eventDescription, eventTime;
 
-            imageView = (ImageView) convertView.findViewById(R.id.eventSponsor);
-            eventName = (TextView) convertView.findViewById(R.id.eventName);
-            eventTime = (TextView) convertView.findViewById(R.id.eventTime);
-            eventLocation = (TextView) convertView.findViewById(R.id.eventLocation);
-            eventDescription = (TextView) convertView.findViewById(R.id.eventDescription);
 
-            eventName.setText(mEventModelList.get(position).getName());
-            eventTime.setText("Date and Time: " + mEventModelList.get(position).getTime());
-            eventLocation.setText("Location: " + mEventModelList.get(position).getLocation());
-            eventDescription.setText("Description: " + mEventModelList.get(position).getEvent());
-            ud += 1;
-
-            return convertView;
         }
-
-
-
-
     }
+
 
 }
 

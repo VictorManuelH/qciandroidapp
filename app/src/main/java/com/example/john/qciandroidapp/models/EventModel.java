@@ -6,7 +6,16 @@ package com.example.john.qciandroidapp.models;
 
 public class EventModel {
 
+    private int id;
     private String event, name, location, time;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getEvent() {
         return event;

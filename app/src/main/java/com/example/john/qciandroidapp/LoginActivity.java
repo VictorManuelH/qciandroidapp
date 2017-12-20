@@ -42,9 +42,9 @@ public class LoginActivity extends AppCompatActivity {
         intentQuestionaire = new Intent(this, FirstLogInQuestionaire.class);
 
 
-            if (!key.equals("null")){
+             if (!key.equals("")){
                 startActivity(intent);
-                //finish();
+              finish();
             }
 
 
@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
     public void SignUp(View view) {
         intent = new Intent(this, SignInActivity.class);
         startActivity(intent);
-        //finish();
+        finish();
     }
 
     public class JSONTask extends AsyncTask<String, String, String> {
@@ -120,11 +120,11 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            if(result !="-1") {
+            if(result !="-1" || result != null) {
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("isUser", result);
                 editor.commit();
-                if (completedQuestionaire.equals("no")){
+                if (completedQuestionaire.equals("")){
                     startActivity(intentQuestionaire);
                     finish();
                 }else{

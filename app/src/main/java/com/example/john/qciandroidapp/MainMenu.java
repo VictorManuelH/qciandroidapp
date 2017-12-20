@@ -1,7 +1,9 @@
 package com.example.john.qciandroidapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,12 +17,14 @@ public class MainMenu extends Activity implements OnMenuItemClickListener {
 
     //EditText txtMsg;
     Toolbar toolbar;
-
+    Intent intent;
+    SharedPreferences settings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 //        txtMsg = (EditText) findViewById(R.id.txtMsg);
+        settings = getSharedPreferences("SETTINGS_PREFS", Context.MODE_PRIVATE);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Sheridan");
         toolbar.setSubtitle("Career Centre App");
@@ -70,7 +74,7 @@ public class MainMenu extends Activity implements OnMenuItemClickListener {
     }
 
     public void Switch(String page) {
-        Intent intent;
+
         switch(page) {
             case "Appointments":
                 intent = new Intent(this, Appointments.class);
@@ -117,11 +121,18 @@ public class MainMenu extends Activity implements OnMenuItemClickListener {
     }
 
     public void logout(View view) {
-        finish();
-        System.exit(0);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putString("isUser", null);
+        editor.commit();
+       intent = new Intent(this, LoginActivity.class);
+       startActivity(intent);
+       finish();
+
     }
 
     public void back(View view) {
         finish();
+        System.exit(0);
     }
 }

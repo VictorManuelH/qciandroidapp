@@ -47,6 +47,8 @@
         </activity>
         <activity android:name=".FirstLogInQuestionaire">
         </activity>
+        <activity android:name=".Register">
+        </activity>
     </application>
 
 </manifest>

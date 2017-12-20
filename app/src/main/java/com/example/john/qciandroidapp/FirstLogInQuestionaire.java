@@ -144,7 +144,7 @@ public class FirstLogInQuestionaire extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            if(result == null) {
+            if(result != null) {
 
                 SharedPreferences.Editor editor = settings.edit();
 
