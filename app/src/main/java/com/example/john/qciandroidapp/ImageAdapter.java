@@ -36,19 +36,21 @@ public class ImageAdapter extends BaseAdapter {
         View grid;
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
-            grid = new View(mContext);
+//            grid = new View(mContext);
             grid = layoutInflater.inflate(R.layout.gridlayout, null);
-            grid.setLayoutParams(new GridView.LayoutParams(450, 450));
+            grid.setLayoutParams(new GridView.LayoutParams(600, 600));
             grid.setPadding(8, 8, 8, 8);
         } else {
             grid = (View) convertView;
         }
         ImageView imageView = (ImageView)grid.findViewById(R.id.image);
         imageView.setImageResource(mThumbIds[position]);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
+        imageView.setPadding(60,0,60,0);
+        imageView.setAdjustViewBounds(true);
+        imageView.setScaleType(ImageView.ScaleType.CENTER);
         TextView textView = (TextView)grid.findViewById(R.id.text);
         textView.setText(String.valueOf(mTextIds[position]));
+        textView.setPadding(8, 8, 8, 8);
         return grid;
     }
 

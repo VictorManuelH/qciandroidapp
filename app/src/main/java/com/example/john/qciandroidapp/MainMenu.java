@@ -101,24 +101,8 @@ public class MainMenu extends Activity implements OnMenuItemClickListener {
         startActivity(intent);
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
 
-        int id = item.getItemId();
 
-        if (id == R.id.button_back) {
-          //  txtMsg.setText("Going back...");
-            Toast.makeText(getApplicationContext(), "Going Back...",
-                    Toast.LENGTH_SHORT).show();
-            return true;
-        } else if (id == R.id.button_logout) {
-            //txtMsg.setText("Logging out...");
-            Toast.makeText(getApplicationContext(), "Logging Out...",
-                    Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        return false;
-    }
 
     public void logout(View view) {
         SharedPreferences.Editor editor = settings.edit();
@@ -134,5 +118,10 @@ public class MainMenu extends Activity implements OnMenuItemClickListener {
     public void back(View view) {
         finish();
         System.exit(0);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        return false;
     }
 }

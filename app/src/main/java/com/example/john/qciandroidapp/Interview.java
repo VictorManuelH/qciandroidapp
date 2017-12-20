@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -20,9 +21,23 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 
+import com.example.john.qciandroidapp.models.EventModel;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static android.widget.AdapterView.*;
@@ -34,8 +49,9 @@ public class Interview extends AppCompatActivity {
     final int TAKE_VIDEO_CAMERA_REQUEST = 200;
     Button record, delete;
     VideoView mVideoView;
-    TextView dataText;
+    ArrayList<String> mQuestionsText;
     Uri fileUri;
+    AsyncTask<String, String, List<String>> execute;
     ArrayList<String> mStringArray;
     public Spinner mQuestions;
 
@@ -51,7 +67,8 @@ public class Interview extends AppCompatActivity {
         mStringArray = new ArrayList<>();
 
         settings = getSharedPreferences("SETTINGS_PREFS", Context.MODE_PRIVATE);
-        setItemsOnList();
+        execute = new JSONTask();
+        execute.execute("http://careercentre.azurewebsites.net/api/InterviewQuestions");
 
 
         mQuestions.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -98,17 +115,80 @@ public class Interview extends AppCompatActivity {
 
     }
 
+    public  class JSONTask extends AsyncTask<String, String, List<String>> {
+
+        @Override
+        protected List<String> doInBackground(String... params) {
+
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream stream = connection.getInputStream();
+
+                reader = new BufferedReader(new InputStreamReader(stream));
+
+                String line = "";
+                StringBuffer stringBuffer = new StringBuffer();
+
+
+                while ((line = reader.readLine()) != null) {
+                    stringBuffer.append(line);
+                }
+
+                String finalJSON = stringBuffer.toString();
+
+                JSONArray jsonArray = new JSONArray(finalJSON);
+
+                mQuestionsText = new ArrayList<>();
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String question;
+                    JSONObject finalObject = jsonArray.getJSONObject(i);
+                   question = finalObject.getString("Question");
+
+                    mQuestionsText.add(question);
+                }
+
+                return mQuestionsText;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null)
+                    connection.disconnect();
+                try {
+                    if (reader != null)
+                        reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<String> result) {
+            super.onPostExecute(result);
+            setItemsOnList();
+        }
+    }
+
+
     public void setItemsOnList() {
 
-        mStringArray = new ArrayList<>();
-        mStringArray.add("Tell me about yourself");
-        mStringArray.add("Why we should hire you");
-        mStringArray.add("What are your Strength");
-        mStringArray.add("What are your Weaknesses");
+
 
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, mStringArray);
+                android.R.layout.simple_spinner_item, mQuestionsText);
         mQuestions.setAdapter(adapter);
     }
 
@@ -146,18 +226,7 @@ public class Interview extends AppCompatActivity {
 
 
         // Create the storage directory(MyCameraVideo) if it does not exist
-        if (!mediaStorageDir.exists()) {
 
-            if (!mediaStorageDir.mkdirs()) {
-
-
-                Toast.makeText(this.getApplicationContext(), "Failed to create directory MyCameraVideo.",
-                        Toast.LENGTH_LONG).show();
-
-                Log.d("MyCameraVideo", "Failed to create directory MyCameraVideo.");
-                return null;
-            }
-        }
 
 
         // Create a media file name

@@ -27,8 +27,9 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences settings;
     private EditText emailEtext, passwordEtext;
     private String password, email;
-    private TextView outputText;
+    private Boolean completed;
     private AsyncTask<String, String, String> execute;
+    private AsyncTask<String, String, Boolean> check;
     String completedQuestionaire;
 
     @Override
@@ -120,11 +121,15 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            if(result !="-1" || result != null) {
+            if(result.equals("-1") || !result.equals(null)) {
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("isUser", result);
                 editor.commit();
-                if (completedQuestionaire.equals("")){
+                check = new CheckQuestionaire();
+                int id = Integer.parseInt(settings.getString("isUser", ""));
+                // check.execute("http://careercentre.azurewebsites.net/api/Users/didCompleteSurvey?id=" + id);
+
+                if (completedQuestionaire.equals("no")){
                     startActivity(intentQuestionaire);
                     finish();
                 }else{
@@ -141,5 +146,68 @@ public class LoginActivity extends AppCompatActivity {
 
         }
     }
+
+    public class CheckQuestionaire extends AsyncTask<String, String, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+                URL url = new URL(params[0]);
+
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+
+                connection.connect();
+
+                InputStream stream = connection.getInputStream();
+
+                reader = new BufferedReader(new InputStreamReader(stream));
+
+                String line = "";
+                StringBuffer stringBuffer = new StringBuffer();
+
+
+                while ((line = reader.readLine()) != null) {
+                    stringBuffer.append(line);
+                }
+
+                return Boolean.valueOf(stringBuffer.toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            } finally {
+                if (connection != null)
+                    connection.disconnect();
+                try {
+                    if (reader != null)
+                        reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            if(result == true) {
+            completed = true;
+            }
+            else
+            completed = false;
+
+
+
+
+        }
+    }
+
 
 }

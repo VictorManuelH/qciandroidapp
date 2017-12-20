@@ -40,7 +40,7 @@
                 android:layout_gravity="fill_vertical|center_horizontal"
                 android:contentDescription="@string/sher_logo"
                 android:padding="8dp"
-                android:src="@drawable/sher_tag" />
+                android:src="@drawable/sher_tag"/>
 
             <Button
                 android:id="@+id/button_logout"
